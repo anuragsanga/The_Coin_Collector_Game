@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>Coin Collector</title>
+        <style>
+            #canvas{
+                text-align: center;
+                background-color: black;
+                border: 5px solid magenta;
+            }
+            body{
+                background-color:antiquewhite;
+                background-image: url(Zenistsu.jpeg);
+            }
+            #canvas2{
+                background-color:black;
+                height:20%;
+            }
+            button{
+                color:mediumslateblue;
+                /*width:50px;
+                height:30px;*/
+                width:80px;
+                height:50px;
+                margin-bottom: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="text-align: center; font-family:'Courier New', Courier, monospace; color:white;">Coin Collector</h1>
+        <div align="center">
+        <canvas id="canvas2" width="600" height="400">
+        </canvas>
+        </div>
+        <br>
+        <div align="center">
+        <button id="up">&uarr;</button><br>
+        <button id="left">&larr;</button>
+        <button id="down">&darr;</button>
+        <button id="right">&rarr;</button>
+        </div>
+        <script>
+                window.onload = function(){
+                    //If we are using window.onload more than once, the contents of the window.onload which appears first in the code won't compute. 
+                    //So in order to load all other window.load we have to write window.addEventListener("load",function(){ });
+                    var canvas = document.getElementById("canvas2");
+                    var context = canvas.getContext("2d");
+                    var x = 250;
+                    var y = 150;
+                    
+                    var coinx = Math.random() * (600-50);
+                    var coiny = Math.random() * (400-50);
+
+
+
+                    context.beginPath();
+                    context.rect(x,y,100,100);
+                    context.fillStyle = "blue";
+                    context.fill();
+
+                    context.strokeStyle = "white";
+                    context.lineWidth = 5;
+                    context.stroke();
+
+                    //In order to move an object, we need to clear the canvas, and redraw the object on its new location.
+
+                    var t = Date.now();//t for storing time
+                    let speed = 350;//to move your object 100px per second
+                    /*
+                    When you want to move your object 100 pixels every second and your game runs at 60fps, you will move the object 100/60=1.666 pixels per frame.
+                    This is what we have done in our draw() function.
+                    When the frame rate increases or decreases, the movement speed will change, too. 
+                    No matter how much time has passed, your objects will always move at the given speed.
+                    This makes the animation work the same on different devices with different frame rates.
+
+                    */
+                    let dir = 0;
+                    let score = 0;
+                    let right = document.getElementById("right");
+                    let left = document.getElementById("left");
+                    let up = document.getElementById("up");
+                    let down = document.getElementById("down");
+
+                    right.onmousedown = function(){dir=1;}
+                    left.onmousedown = function(){dir=2;}
+                    up.onmousedown = function(){dir=4;}
+                    down.onmousedown = function(){dir=3;}
+
+                    right.ontouchstart = function(){dir=1;}
+                    left.ontouchstart = function(){dir=2;}
+                    up.ontouchstart = function(){dir=4;}
+                    down.ontouchstart = function(){dir=3;}
+
+                    right.onmouseup = function(){dir=0;}
+                    left.onmouseup = function(){dir=0;}
+                    up.onmouseup = function(){dir=0;}
+                    down.onmouseup = function(){dir=0;}
+
+                    right.ontouchend = function(){dir=0;}
+                    right.ontouchend = function(){dir=0;}
+                    right.ontouchend = function(){dir=0;}
+                    right.ontouchend = function(){dir=0;}
+                    /*
+                    var dir;
+                    For on screen buttons
+                    right.onmousedown = function(){ //press
+                        dir = 1;
+                    }
+                    right.onmouseup = function(){ //release
+                        dir = 0;
+                    }
+                    For touch screen buttons
+                    right.ontouchstart = function(){
+                        dir = 1;
+                    }
+                    right.ontouchend = function(){
+                        dir = 0;
+                    }
+                    */
+                    
+                    
+                    function draw(){
+                        var timePassed = (Date.now()-t)/1000;
+                        /*
+                        We take the current Date.now() value and subtract the previous t value from it.
+                        We also divide the number by 1000, to get the seconds from the milliseconds.
+                        The result shows the number of seconds that is required to produce one frame.
+
+                        */
+                        t = Date.now();//Date.now() to get the current time in milliseconds
+                        var fps =Math.round(1/timePassed);//to get the number of frames per second
+
+                        //Here, clearRect() is used to clear the canvas.
+                        context.clearRect(0,0,600,400);//This is used to clear the whole canvas, everytime the draw() function is called.
+
+                        /*
+                        context.font = "24px Arial";
+                        context.fillStyle ="black";
+                        context.fillText("FPS : "+fps,20,30);
+                        context.fill();
+                        context.stroke();
+                        */
+                        context.font = "24px Arial";
+                        context.fillStyle ="white";
+                        context.fillText("Score : "+score,20,30);
+                        context.fill();
+                        context.stroke();
+
+
+                        context.beginPath();
+                        context.rect(x,y,100,100);
+                        context.fillStyle = "blue";
+                        context.fill();
+
+                        context.strokeStyle = "white";
+                        context.lineWidth = 5;
+                        context.stroke();
+
+                        context.beginPath();
+                        context.rect(coinx, coiny, 50, 50);
+                        context.fillStyle="#e3c228";
+                        context.fill();
+
+
+                        if(dir == 1){
+                            if(x+100 < 600){
+                            x += (speed * timePassed);
+                            }
+                        }
+                        else if(dir == 2){
+                            if(x>0){
+                            x -= (speed * timePassed);
+                            }
+                        }
+                        else if(dir == 3){
+                            if(y+100 < 400){
+                            y += (speed * timePassed);
+                            }
+                        }
+                        else if(dir == 4){
+                            if(y > 0){
+                            y -= (speed * timePassed);
+                            }
+                        }
+
+                        if (coinx <= x+100 && x <= coinx+50 && coiny <= y+100 && y <= coiny+50) {
+                        score++;
+                        coinx = Math.random() * (600-50);
+                        coiny = Math.random() * (400-50);
+                        }
+                        
+                        //x += 10;
+                        //x += dir*(speed * timePassed);//to achieve movement relative to time
+                        /*
+                        Solution to handle Dynamic Framerate so that the animation looks the same on every device.
+                        For that, we can take the time as a factor for our animation, and move the object based on the time that has passed between the frames. This way, the distance that our object passed in a given timeframe will always be the same, irrespective of the frame rate.
+                        To move the object relative to time, we first need to define a speed value for our object.
+                        Let's say we want it to move at 100 pixels per second
+                   
+                        */
+
+                        //if(x >= 600-100 || x<=0){
+                            //speed = 0;
+                            //dir *= -1;
+                            //x = -100;
+                            window.requestAnimationFrame(draw);
+                        }
+                        
+                        //It usally runs at around 60fps.
+                        draw();
+                    }
+                    //setInterval(draw,50);
+                    
+                    //setInterval(draw,500);//Here value 50 represents 50 milliseconds
+                    /*
+                    Using setInterval() can sometimes causes performance issues.
+                    On slower devices the browser may not be able to perform the redrawing operations in the given timeframe.
+                    This will eventually cause the browser to hang and stop responding.
+                    */
+                   //Instead we can use window.requestAnimationFrame() function.
+                   //window.requestAnimationFrame() won't hang the browser and will take into account the system resources when performing the game loop.
+                   //We have to use this function inside the draw() function.
+
+                   /*
+                   If we are using 50 as value in setInterval(draw,50) 
+                   It means that we are using 1000/50 =20fps in our animation.
+                   */
+
+                   /*
+                   But why 60fps?
+                   Humans can process 10-12 frames per second individually.
+                   Anything more will be perceived as motion, and that's what makes the movements seem smoother.*/
+
+            </script>
+            
+    </body>
+</html>
